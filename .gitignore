@@ -1,0 +1,25 @@
+# Secrets
+.env
+
+# Agent-generated clones (siblings of this directory, not inside it)
+# These are created at runtime and should never be committed
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Runtime state
+context.json
+last_context.txt
+
+# IDE
+.vscode/
+.idea/
