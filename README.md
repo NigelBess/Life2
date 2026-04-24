@@ -57,16 +57,14 @@ The loop never stops. Whether or not the user has said anything, the agent runs 
 
 ### The Teleport
 
-On every startup, Life2 copies its own source directory into a new sibling directory (e.g. `Life2_gen1_a3f8b1c2/`). All edits the agent makes go into that copy — the original source is never touched during a session.
+Each generation of the agent follows the same cycle, and this cycle can repeat many times over the course of a single running session:
 
-When the agent issues an **Evolve** command:
+1. On startup, the agent copies its own source directory into a new sibling directory (e.g. `Life2_gen1_a3f8b1c2/`). All edits it makes during this generation go into that copy — the launched source is never modified directly.
+2. The agent runs, reads its own code, and writes changes into the working copy.
+3. When it is ready, it issues an **Evolve** command. The full conversation history is serialized into the working copy, a new process is spawned from it, and the current process exits. The old source directory is deleted.
+4. The new process immediately starts step 1 again — copying itself, running, modifying, evolving.
 
-1. The full conversation history is serialized to `context.json` inside the modified copy
-2. A new process is spawned from that modified copy, passing it the saved context
-3. The current process exits
-4. The new process deletes the old source directory, creates its own working copy, and continues the conversation — the LLM does not notice the transition
-
-From the agent's perspective (and the user's, via the UI), nothing happened. From the filesystem's perspective, an entirely new version of the program is now running.
+A long-running agent may teleport dozens of times. Each evolution is a permanent upgrade: the new capabilities, fixes, or rewrites the agent made in this generation become the baseline for the next. From the agent's perspective, nothing happened — it simply continues the conversation. From the filesystem's perspective, an entirely new version of the program is running.
 
 ### The UI
 
