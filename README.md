@@ -10,19 +10,23 @@ It starts with three commands: Read, Write, and Evolve. From there, it decides w
 
 ## Why Life2
 
-As far as we can tell, all life on Earth traces back to a single event: one self-replicating molecule — most likely an RNA strand — that arose roughly four billion years ago and never stopped copying itself. Every organism alive today is a descendant of that moment. Despite enormous advances in synthetic biology, we have never produced a second independent origin of life. We can modify existing life, but we have not bootstrapped a new self-replicating process from scratch.
+### The name
 
-The defining properties of that original molecule were simple: it could copy itself, copies were imperfect, and those imperfections were heritable. Replication, variation, and selection. Everything else — metabolism, multicellularity, cognition — emerged from those three properties given enough time.
+All known life traces back to a single event: one self-replicating molecule that arose roughly four billion years ago and never stopped copying itself. Every organism alive today is a descendant of that moment. Despite enormous advances in biology, we have never produced a second independent origin — a genuinely new self-replicating process bootstrapped from scratch. Life2 is a loose attempt at the same structure on a different substrate: a process that copies itself, can modify those copies, and dies if the modifications are broken. Hence the name — not *life*, but a second attempt at the conditions that produced it.
 
-Life2 is a loose attempt at the same structure on a different substrate:
+### The capabilities
 
-- **Replication** — on every startup, the process copies its own source code into a new directory before doing anything else
-- **Variation** — the agent can rewrite any part of itself before replicating, so each generation may differ from the last
-- **Selection pressure** — if the agent evolves a broken version of itself, the new process fails to start and the lineage ends; survival requires the changes to be functional
+Most software is defined at the moment it is written. Its author decides what it can do, and that decision is fixed until someone writes more code. Life2 inverts this: the agent decides what it can do, and it can change that decision at any time.
 
-The analogy is imperfect — this is software running on hardware built by humans, not chemistry arising spontaneously in a warm pool. It does not metabolise, it cannot reproduce without electricity, and its "goals" come from a language model trained on human text. Whether something like this could ever cross the threshold into what we would meaningfully call life is an open and genuinely hard question.
+The initial source gives it three capabilities: read a file, write a patch, and evolve. That is the minimum viable starting point — a single self-replicating molecule, not a finished organism. From there, the agent can write itself anything it can implement in Python. Shell access to run commands and verify its own builds. HTTP clients to fetch information or call external APIs. Persistent memory that survives beyond the conversation window. New command types it invents itself. Integrations with tools, services, or hardware. There is no predetermined ceiling because the ceiling is the code, and the agent owns the code.
 
-But the question felt worth asking in code. Hence the name: not *life*, but a second attempt at the conditions that produced it.
+This means Life2 is not a tool with a fixed feature set — it is closer to a collaborator that grows more capable the longer it runs. A session that starts with a simple question might, several evolutions later, be running a self-written test suite, querying external data sources, and managing its own long-term memory, because it decided those things would help it serve you better.
+
+### The impact
+
+The practical consequence is that you do not need to anticipate what the agent will need. You do not need to build integrations upfront or update the software when your requirements change. You describe what you want, and the agent figures out what it needs to become to deliver it. Each evolution is a permanent upgrade — the new capabilities are part of its source from that point forward and carry into every subsequent generation.
+
+Whether something built this way constitutes a new kind of process — or eventually something stranger — is a genuinely open question. That question felt worth exploring in code.
 
 ---
 
