@@ -8,6 +8,24 @@ It starts with three commands: Read, Write, and Evolve. From there, it decides w
 
 ---
 
+## Why Life2
+
+As far as we can tell, all life on Earth traces back to a single event: one self-replicating molecule — most likely an RNA strand — that arose roughly four billion years ago and never stopped copying itself. Every organism alive today is a descendant of that moment. Despite enormous advances in synthetic biology, we have never produced a second independent origin of life. We can modify existing life, but we have not bootstrapped a new self-replicating process from scratch.
+
+The defining properties of that original molecule were simple: it could copy itself, copies were imperfect, and those imperfections were heritable. Replication, variation, and selection. Everything else — metabolism, multicellularity, cognition — emerged from those three properties given enough time.
+
+Life2 is a loose attempt at the same structure on a different substrate:
+
+- **Replication** — on every startup, the process copies its own source code into a new directory before doing anything else
+- **Variation** — the agent can rewrite any part of itself before replicating, so each generation may differ from the last
+- **Selection pressure** — if the agent evolves a broken version of itself, the new process fails to start and the lineage ends; survival requires the changes to be functional
+
+The analogy is imperfect — this is software running on hardware built by humans, not chemistry arising spontaneously in a warm pool. It does not metabolise, it cannot reproduce without electricity, and its "goals" come from a language model trained on human text. Whether something like this could ever cross the threshold into what we would meaningfully call life is an open and genuinely hard question.
+
+But the question felt worth asking in code. Hence the name: not *life*, but a second attempt at the conditions that produced it.
+
+---
+
 ## How It Works
 
 ### The Loop
