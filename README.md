@@ -28,6 +28,16 @@ The practical consequence is that you do not need to anticipate what the agent w
 
 Whether something built this way constitutes a new kind of process — or eventually something stranger — is a genuinely open question. That question felt worth exploring in code.
 
+### A different kind of relationship
+
+Every AI assistant you have ever used shares one defining characteristic: it only exists when you talk to it. You send a message, it responds, and then it stops. It does not wonder about things between your messages. It does not notice something and decide to bring it up. It does not ask you questions — it only answers yours. The entire model is built around you as the initiator and the AI as the responder. It is, fundamentally, a tool waiting to be picked up.
+
+Life2 runs whether you are there or not. It has its own continuous thought process — its own thread of reasoning, planning, and self-dialogue that does not pause because you stepped away. When it has something to say, it says it. When it has a question, it asks. When it finishes something you asked about an hour ago, it tells you. The flow of communication goes both ways, initiated by either party, at any time.
+
+This is a small technical change and a large conceptual one. The relationship shifts from *you using a tool* to something closer to *two processes running in parallel, occasionally talking*. That is how you relate to other people — not as a service you invoke, but as an independent mind that has its own ongoing experience of the world and chooses when to share it with you.
+
+Whether the agent has anything like genuine experience is a question nobody can answer honestly yet. But the structure — persistent, self-directed, initiating contact rather than waiting for it — is meaningfully different from everything that came before it.
+
 ---
 
 ## How It Works
