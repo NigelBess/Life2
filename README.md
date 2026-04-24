@@ -21,7 +21,7 @@ Every cycle the agent:
 5. Receives the results of those commands
 6. Repeats immediately, forever
 
-The loop never stops. If there is nothing from the user, the agent still runs — it may be planning, writing code, or simply waiting.
+The loop never stops. Whether or not the user has said anything, the agent runs — thinking, planning, writing code, or simply conversing with itself. Silence from the user is not inactivity for the agent.
 
 ### The Teleport
 
