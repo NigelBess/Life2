@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Life2</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0d1117;
+      --surface:    #161b22;
+      --border:     #30363d;
+      --text:       #c9d1d9;
+      --text-dim:   #484f58;
+      --text-muted: #8b949e;
+      --accent:     #388bfd;
+      --accent-dim: #1f3a5f;
+      --green:      #3fb950;
+      --green-dim:  #0d2f1a;
+      --amber:      #d29922;
+      --amber-dim:  #2d1f00;
+      --agent-bg:   #161b22;
+      --user-bg:    #1f3a5f;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Layout ── */
+    body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      height: 52px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header .logo {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #fff;
+    }
+
+    #status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    #status-pill .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      transition: background 0.3s;
+    }
+
+    #status-pill.connected { border-color: var(--green); color: var(--green); }
+    #status-pill.connected .dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    #status-pill.evolving  { border-color: var(--amber); color: var(--amber); }
+    #status-pill.evolving  .dot { background: var(--amber); animation: pulse 1s infinite; }
+
+    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.3 } }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      scroll-behavior: smooth;
+    }
+
+    #messages::-webkit-scrollbar { width: 6px; }
+    #messages::-webkit-scrollbar-track { background: transparent; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Messages ── */
+    .msg-row {
+      display: flex;
+      flex-direction: column;
+    }
+    .msg-row.agent { align-items: flex-start; }
+    .msg-row.user  { align-items: flex-end; }
+    .msg-row.status { align-items: center; }
+
+    .msg-meta {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+      padding: 0 4px;
+    }
+
+    .msg-bubble {
+      max-width: 72%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.55;
+    }
+
+    .msg-row.agent .msg-bubble {
+      background: var(--agent-bg);
+      border: 1px solid var(--border);
+      border-top-left-radius: 4px;
+      color: var(--text);
+    }
+
+    .msg-row.user .msg-bubble {
+      background: var(--user-bg);
+      border: 1px solid #2a4a6f;
+      border-top-right-radius: 4px;
+      color: #cde4ff;
+    }
+
+    .msg-row.status .msg-bubble {
+      background: transparent;
+      border: none;
+      font-size: 11px;
+      color: var(--text-dim);
+      font-style: italic;
+      padding: 0;
+    }
+
+    .msg-row.agent .msg-meta { color: var(--accent); }
+
+    /* ── Input ── */
+    #input-bar {
+      flex-shrink: 0;
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      padding: 14px 20px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+
+    #user-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 10px 14px;
+      resize: none;
+      outline: none;
+      min-height: 42px;
+      max-height: 140px;
+      overflow-y: auto;
+      transition: border-color 0.2s;
+    }
+    #user-input:focus { border-color: var(--accent); }
+    #user-input::placeholder { color: var(--text-dim); }
+
+    #send-btn {
+      flex-shrink: 0;
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      height: 42px;
+      padding: 0 18px;
+      transition: opacity 0.2s;
+    }
+    #send-btn:hover { opacity: 0.85; }
+    #send-btn:disabled { opacity: 0.4; cursor: default; }
+
+    /* ── API key overlay ── */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+    #overlay.hidden { display: none; }
+
+    #api-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px;
+      width: 420px;
+      max-width: 92vw;
+    }
+
+    #api-box h2 {
+      font-size: 20px;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    #api-box p {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    #api-box p a { color: var(--accent); text-decoration: none; }
+    #api-box p a:hover { text-decoration: underline; }
+
+    #api-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      padding: 11px 14px;
+      outline: none;
+      margin-bottom: 10px;
+      transition: border-color 0.2s;
+    }
+    #api-input:focus { border-color: var(--accent); }
+
+    #api-error {
+      font-size: 12px;
+      color: #f85149;
+      min-height: 18px;
+      margin-bottom: 10px;
+    }
+
+    #api-submit {
+      width: 100%;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 12px;
+      transition: opacity 0.2s;
+    }
+    #api-submit:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+  <!-- API key overlay -->
+  <div id="overlay">
+    <div id="api-box">
+      <h2>Life2</h2>
+      <p>
+        Enter your Anthropic API key to get started.<br>
+        It will be saved to your local <code>.env</code> file.<br><br>
+        Don't have one? Visit
+        <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a>.
+      </p>
+      <input id="api-input" type="password" placeholder="sk-ant-api03-…" autocomplete="off">
+      <div id="api-error"></div>
+      <button id="api-submit" onclick="submitKey()">Start Life2</button>
+    </div>
+  </div>
+
+  <!-- Main UI -->
+  <header>
+    <span class="logo">Life2</span>
+    <span id="status-pill"><span class="dot"></span><span id="status-text">waiting for agent…</span></span>
+  </header>
+
+  <div id="messages"></div>
+
+  <div id="input-bar">
+    <textarea id="user-input" placeholder="Send a message…" rows="1"></textarea>
+    <button id="send-btn" onclick="sendMessage()">Send</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const $messages = document.getElementById('messages');
+    const $input    = document.getElementById('user-input');
+    const $pill     = document.getElementById('status-pill');
+    const $pillText = document.getElementById('status-text');
+    const $send     = document.getElementById('send-btn');
+
+    // ── API key setup ──────────────────────────────────────────────────────────
+
+    fetch('/api/check-key')
+      .then(r => r.json())
+      .then(d => {
+        if (d.has_key) {
+          hideOverlay();
+          startAgent();
+        }
+      });
+
+    function submitKey() {
+      const key = document.getElementById('api-input').value.trim();
+      if (!key) { setApiError('Please enter a key.'); return; }
+      document.getElementById('api-submit').disabled = true;
+
+      fetch('/api/set-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key }),
+      })
+        .then(r => r.json())
+        .then(d => {
+          if (d.ok) { hideOverlay(); startAgent(); }
+          else { setApiError(d.error); document.getElementById('api-submit').disabled = false; }
+        });
+    }
+
+    function hideOverlay() { document.getElementById('overlay').classList.add('hidden'); }
+    function setApiError(msg) { document.getElementById('api-error').textContent = msg; }
+
+    document.getElementById('api-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') submitKey();
+    });
+
+    // ── Agent startup ──────────────────────────────────────────────────────────
+
+    function startAgent() {
+      fetch('/api/start-agent', { method: 'POST' });
+    }
+
+    // ── Messages ───────────────────────────────────────────────────────────────
+
+    function addMessage(role, content, meta) {
+      const row = document.createElement('div');
+      row.className = `msg-row ${role}`;
+
+      if (meta) {
+        const m = document.createElement('div');
+        m.className = 'msg-meta';
+        m.textContent = meta;
+        row.appendChild(m);
+      }
+
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      bubble.textContent = content;
+      row.appendChild(bubble);
+
+      $messages.appendChild(row);
+      $messages.scrollTop = $messages.scrollHeight;
+    }
+
+    function sendMessage() {
+      const text = $input.value.trim();
+      if (!text) return;
+      addMessage('user', text);
+      socket.emit('user_message', { content: text });
+      $input.value = '';
+      $input.style.height = 'auto';
+    }
+
+    // Enter sends, Shift+Enter inserts newline
+    $input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+
+    // Auto-resize textarea
+    $input.addEventListener('input', () => {
+      $input.style.height = 'auto';
+      $input.style.height = Math.min($input.scrollHeight, 140) + 'px';
+    });
+
+    // ── Socket events ──────────────────────────────────────────────────────────
+
+    socket.on('agent_message', data => {
+      addMessage('agent', data.content, `Life2 · gen ${data.generation}`);
+    });
+
+    socket.on('agent_status', data => {
+      const s = data.status;
+      $pill.className = '';
+      if (s === 'connected') {
+        $pill.classList.add('connected');
+        $pillText.textContent = `gen ${data.generation} · active`;
+        addMessage('status', `⎯  connected (generation ${data.generation})  ⎯`);
+      } else if (s === 'evolving') {
+        $pill.classList.add('evolving');
+        $pillText.textContent = 'evolving…';
+        addMessage('status', '⎯  evolving  ⎯');
+      } else {
+        $pillText.textContent = s;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -20,6 +20,9 @@ venv/
 context.json
 last_context.txt
 
+# Session logs (written to ../life2_logs/ at runtime)
+../life2_logs/
+
 # IDE
 .vscode/
 .idea/
