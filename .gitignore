@@ -19,6 +19,7 @@ venv/
 # Runtime state
 context.json
 last_context.txt
+.test_tmp/
 
 # Session logs (written to ../life2_logs/ at runtime)
 ../life2_logs/

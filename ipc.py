@@ -27,12 +27,16 @@ class AgentIPCClient:
         self._send({"type": "status", "content": content})
 
     def start_reader(self, input_handler: "UserInputHandler") -> None:
+        if self._sock is None:
+            return
         threading.Thread(target=self._reader, args=(input_handler,), daemon=True).start()
 
     def _reader(self, input_handler: "UserInputHandler") -> None:
         buf = ""
         try:
             while True:
+                if self._sock is None:
+                    break
                 chunk = self._sock.recv(4096)
                 if not chunk:
                     break

@@ -35,9 +35,10 @@ def main() -> None:
 
     ipc: Optional[AgentIPCClient] = None
     if args.ui_port:
-        ipc = AgentIPCClient(args.ui_port)
-        ipc.connect()
-        ipc.start_reader(input_handler)
+        candidate = AgentIPCClient(args.ui_port)
+        if candidate.connect():
+            ipc = candidate
+            ipc.start_reader(input_handler)
 
     if context_path and context_path.exists():
         ctx = AgentContext.load(context_path)
@@ -66,14 +67,9 @@ def main() -> None:
         greeting = "Hello there"
         if ipc:
             ipc.send_to_user(greeting)
-            first_input = input_handler.get()
         else:
             print(greeting, flush=True)
             input_handler.start_stdin()
-            first_input = input_handler.get()
-
-        if first_input:
-            ctx.messages.append({"role": "user", "content": first_input})
 
     if not ipc:
         input_handler.start_stdin()

@@ -11,11 +11,24 @@ class CloneManager:
     def __init__(self, launch_dir: Path):
         self.launch_dir = launch_dir
 
+    def _ignore_runtime_artifacts(self, directory: str, names: list[str]) -> set[str]:
+        ignored = {
+            ".git",
+            ".env",
+            "__pycache__",
+            ".pytest_cache",
+            ".mypy_cache",
+            ".ruff_cache",
+            "context.json",
+            "last_context.txt",
+        }
+        return {name for name in names if name in ignored or name.endswith(".pyc")}
+
     def create_work_dir(self, generation: int) -> Path:
         base = self.launch_dir.parent
         name = f"{self.launch_dir.name}_gen{generation}_{uuid4().hex[:8]}"
         work_dir = base / name
-        shutil.copytree(self.launch_dir, work_dir)
+        shutil.copytree(self.launch_dir, work_dir, ignore=self._ignore_runtime_artifacts)
         return work_dir
 
     def evolve(self, context: AgentContext, work_dir: Path) -> None:
