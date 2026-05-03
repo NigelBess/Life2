@@ -1,0 +1,53 @@
+<div class="shell">
+  <section class="key-overlay" *ngIf="showKeyOverlay">
+    <form class="key-dialog" (ngSubmit)="submitKey()">
+      <h1>Life2</h1>
+      <p>Enter your Anthropic API key. It will be saved to the local .env file.</p>
+      <input
+        name="apiKey"
+        type="password"
+        autocomplete="off"
+        placeholder="sk-ant-api03-..."
+        [(ngModel)]="apiKey"
+      >
+      <div class="error" aria-live="polite">{{ apiError }}</div>
+      <button type="submit" [disabled]="keySubmitting">
+        {{ keySubmitting ? 'Saving...' : 'Start Life2' }}
+      </button>
+    </form>
+  </section>
+
+  <header>
+    <span class="logo">Life2</span>
+    <span class="status-pill" [class]="statusKind">
+      <span class="dot"></span>
+      <span>{{ statusText }}</span>
+    </span>
+  </header>
+
+  <main #messagesPane class="messages">
+    <article
+      *ngFor="let message of messages"
+      class="message-row"
+      [class.agent]="message.role === 'agent'"
+      [class.user]="message.role === 'user'"
+      [class.status]="message.role === 'status'"
+    >
+      <div class="meta" *ngIf="message.meta">{{ message.meta }}</div>
+      <div class="bubble">{{ message.content }}</div>
+    </article>
+  </main>
+
+  <form class="composer" (ngSubmit)="send()">
+    <textarea
+      name="draft"
+      rows="1"
+      placeholder="Send a message..."
+      [(ngModel)]="draft"
+      (keydown)="onDraftKeydown($event)"
+    ></textarea>
+    <button type="submit" [disabled]="!draft.trim() || sendPending">
+      {{ sendPending ? 'Sending' : 'Send' }}
+    </button>
+  </form>
+</div>

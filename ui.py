@@ -1,7 +1,8 @@
 """
-Stable UI process. Run once — survives all agent evolutions.
-Opens a browser UI at http://localhost:8080
+Stable backend process. Run once - survives all agent evolutions.
+Provides the API consumed by the Angular UI.
 """
+import argparse
 import json
 import os
 import queue
@@ -14,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
-from flask import Flask, Response, jsonify, render_template, request, stream_with_context
+from flask import Flask, Response, jsonify, request, stream_with_context
 
 AGENT_PORT = 7337
 WEB_PORT   = 8080
@@ -69,7 +70,11 @@ def _load_api_key() -> str:
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return jsonify({
+        "ok": True,
+        "service": "Life2 backend",
+        "ui": "Run npm start and open the Angular UI on port 4200.",
+    })
 
 
 @app.route("/api/events")
@@ -222,7 +227,12 @@ def _agent_ipc_server() -> None:
 # ── Entry point ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--no-browser", action="store_true")
+    args = parser.parse_args()
+
     threading.Thread(target=_agent_ipc_server, daemon=True).start()
-    threading.Timer(1.2, lambda: webbrowser.open(f"http://localhost:{WEB_PORT}")).start()
-    print(f"Life2 -> http://localhost:{WEB_PORT}", flush=True)
+    if not args.no_browser:
+        threading.Timer(1.2, lambda: webbrowser.open(f"http://localhost:{WEB_PORT}")).start()
+    print(f"Life2 backend -> http://localhost:{WEB_PORT}", flush=True)
     app.run(host="0.0.0.0", port=WEB_PORT, debug=False, threaded=True)

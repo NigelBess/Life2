@@ -16,6 +16,11 @@ build/
 .venv/
 venv/
 
+# Node / Angular
+node_modules/
+.angular/
+npm-debug.log*
+
 # Runtime state
 context.json
 last_context.txt

@@ -68,7 +68,7 @@ A long-running agent may teleport dozens of times. Each evolution is a permanent
 
 ### The UI
 
-A separate `ui.py` process acts as a stable terminal interface. It starts the agent, then stays alive across all generations. The agent connects back to it over a local TCP socket each time it starts. Evolutions appear as a brief `[evolving — reconnecting...]` message.
+A separate `ui.py` backend process starts the agent, then stays alive across all generations. The Angular UI talks to it over HTTP and Server-Sent Events. The agent connects back to the backend over a local TCP socket each time it starts.
 
 ---
 
@@ -77,6 +77,7 @@ A separate `ui.py` process acts as a stable terminal interface. It starts the ag
 ### Prerequisites
 
 - Python 3.11+
+- Node.js 20+
 - An [Anthropic API key](https://console.anthropic.com/)
 
 ### Install
@@ -85,6 +86,7 @@ A separate `ui.py` process acts as a stable terminal interface. It starts the ag
 git clone <this-repo> Life2
 cd Life2
 pip install -r requirements.txt
+npm install
 cp .env.example .env
 # edit .env and set ANTHROPIC_API_KEY=your_key_here
 ```
@@ -92,10 +94,19 @@ cp .env.example .env
 ### Run (with UI — recommended)
 
 ```bash
-python ui.py
+npm start
 ```
 
-The UI starts the agent automatically. Type to interact. The session persists across evolutions and across restarts — the agent will resume its previous state if you close and reopen.
+`npm start` runs the Python backend on port `8080` and the Angular UI on port `4200`.
+Open `http://localhost:4200` in your browser. The UI starts the agent automatically.
+Type to interact. The session persists across evolutions and across restarts.
+
+To run the backend and frontend separately:
+
+```bash
+python3 ui.py --no-browser
+npm run start:frontend
+```
 
 ### Run (standalone, no UI)
 
@@ -108,7 +119,7 @@ python main.py
 ## Architecture
 
 ```
-ui.py                  Stable UI process — lives forever, bridges user ↔ agent
+ui.py                  Stable backend process - bridges Angular UI and agent IPC
 main.py                Agent entry point — creates working copy, sets up IPC, starts loop
 loop.py                The never-ending cycle: drain input → LLM → commands → feedback
 response_parser.py     Parses XML responses from the LLM into structured objects
