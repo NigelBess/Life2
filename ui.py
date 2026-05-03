@@ -111,6 +111,10 @@ def send():
     if content:
         pending.put(content)
         _log("user", content)
+        _push({
+            "type": "activity",
+            "content": "message queued for agent" if not _state["connected"] else "message received by backend",
+        })
     return jsonify({"ok": True, "queued": not _state["connected"]})
 
 
@@ -196,6 +200,9 @@ def _agent_ipc_server() -> None:
                             elif obj["type"] == "status":
                                 _log("status", obj["content"], g)
                                 _push({"type": "status", "status": obj["content"], "generation": g})
+                            elif obj["type"] == "activity":
+                                _log("activity", obj["content"], g)
+                                _push({"type": "activity", "content": obj["content"], "generation": g})
                         except (json.JSONDecodeError, KeyError):
                             pass
             except OSError:
@@ -212,6 +219,7 @@ def _agent_ipc_server() -> None:
                         continue
                     payload = json.dumps({"type": "user_input", "content": msg}) + "\n"
                     c.sendall(payload.encode("utf-8"))
+                    _push({"type": "activity", "content": "message delivered to agent"})
             except OSError:
                 pass
 

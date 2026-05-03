@@ -26,6 +26,9 @@ class AgentIPCClient:
     def send_status(self, content: str) -> None:
         self._send({"type": "status", "content": content})
 
+    def send_activity(self, content: str) -> None:
+        self._send({"type": "activity", "content": content})
+
     def start_reader(self, input_handler: "UserInputHandler") -> None:
         if self._sock is None:
             return

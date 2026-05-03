@@ -146,6 +146,15 @@ export class AppComponent implements OnDestroy {
       return;
     }
 
+    if (event.type === 'activity') {
+      this.addMessage({
+        role: 'status',
+        content: event.content,
+        meta: event.generation ? `activity gen ${event.generation}` : 'activity',
+      });
+      return;
+    }
+
     if (event.status === 'connected') {
       this.generation = event.generation;
       this.setStatus('connected', `gen ${event.generation} active`);

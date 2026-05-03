@@ -17,6 +17,7 @@ export interface SendResult extends ApiResult {
 
 export type Life2Event =
   | { type: 'message'; content: string; generation: number }
+  | { type: 'activity'; content: string; generation?: number }
   | { type: 'status'; status: 'starting' | 'connected' | 'evolving' | string; generation?: number };
 
 @Injectable({ providedIn: 'root' })
