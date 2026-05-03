@@ -224,5 +224,5 @@ def _agent_ipc_server() -> None:
 if __name__ == "__main__":
     threading.Thread(target=_agent_ipc_server, daemon=True).start()
     threading.Timer(1.2, lambda: webbrowser.open(f"http://localhost:{WEB_PORT}")).start()
-    print(f"Life2  →  http://localhost:{WEB_PORT}", flush=True)
+    print(f"Life2 -> http://localhost:{WEB_PORT}", flush=True)
     app.run(host="0.0.0.0", port=WEB_PORT, debug=False, threaded=True)
